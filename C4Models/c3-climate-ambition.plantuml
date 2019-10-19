@@ -1,0 +1,28 @@
+@startuml [Information] Climate Ambition
+!includeurl c4-plantuml/C4_Container.puml
+
+
+'Main system boundary and relations internally
+System_Boundary(c1, "Climate Ambition") {
+    Container(category, "Category", "Categories to group ambitions by")
+    Container(ambitionHeader, "AmbitionHeader", "Ambition information")
+    Container(ambitionPage, "AmbitionPage", "Information why this ambition matters and what climate impact it can have")
+
+    
+    Rel_Down(category, ambitionHeader, "Has [0..n]") 
+    Rel_Left(ambitionPage, ambitionHeader, "Part of") 
+
+
+    Container(user, "User", "User information")
+    Container(personalAmbition, "PersonalAmbition", "An ambition a user has committed to")
+    Container(personalAction, "PersonalAction", "An action from an ambition the user has committed to")
+ 
+    Rel_Right(user, personalAmbition, "has [0..n]") 
+    Rel_Right(personalAmbition, personalAction, "has [0..n]") 
+
+}
+
+
+
+
+@enduml
