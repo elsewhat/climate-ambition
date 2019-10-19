@@ -1,0 +1,98 @@
+openapi: '3.0.0'
+servers: 
+  - url: https://tbd
+info:
+  title: Climate Ambition API
+  version: 0.0.1
+paths:
+  /categories:
+    get:
+      operationId: getAmbitionCategories
+      summary: Get ambition categories
+      tags:
+        - Get calendar and time entries
+      parameters:
+        - in: query
+          name: includeAmbitions
+          required: false
+          schema:
+            type: boolean
+            default: true
+      responses:
+        '200':
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+          description: Request successful
+        '403':
+          description: User is not authorized
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+                
+                 
+
+components:
+  schemas:
+#General error object   
+    Error: 
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+
+    CA.Category:
+      type: object
+      properties:  
+        id:
+          type: string
+          format: date
+          description: Id of category
+          example: "FOOD"    
+        shortname:
+          type: string
+          format: date
+          description: Short name
+          example: "FOOD" 
+        ingress:
+          type: string
+          format: date
+          description: Ingress
+          example: "Food related amibitions..."                    
+        ambitions:
+          type: array
+          items: 
+            $ref: '#/components/schemas/CA.Ambition'
+          
+            
+    CA.Ambition:
+      type: object
+      properties:
+        id: 
+          type: string
+          format: date
+          description: Id of ambition
+          example: "FOOD"  
+        shortname:
+          type: string
+          format: date
+          description: Short name
+          example: "FOOD" 
+        ingress:
+          type: string
+          format: date
+          description: Ingress
+          example: "Food related amibitions..."   
+        type:
+          type: string
+          description: Type
+          enum: ["+1","Action"]
