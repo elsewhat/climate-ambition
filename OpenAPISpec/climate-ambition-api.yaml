@@ -10,7 +10,7 @@ paths:
       operationId: getAmbitionCategories
       summary: Get ambition categories
       tags:
-        - Get calendar and time entries
+        - Master data
       parameters:
         - in: query
           name: includeAmbitions
@@ -23,7 +23,7 @@ paths:
           content: 
             application/json:
               schema:
-                $ref: '#/components/schemas/Category'
+                $ref: '#/components/schemas/CA.Category'
           description: Request successful
         '403':
           description: User is not authorized
@@ -33,8 +33,156 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  
+  /ambition-page/{ambition-id}:
+    get:
+      operationId: getAmbitionDPage
+      summary: Get a ambition in catalog. TODO - Refactor as markdown page on webserver instead instead?
+      tags:
+        -  Master data
+      parameters:
+        - in: path
+          name: ambition-id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CA.AmbitionPage'
+          description: Request successful
+        '403':
+          description: User is not authorized
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error' 
                 
-                 
+  /me/ambitions:
+    get:
+      operationId: getMyAmbitions
+      summary: Get logged on user's ambitions
+      tags:
+        - Read my data
+      responses:
+        '200':
+          content: 
+            application/json:
+              schema:
+                type: array
+                items:               
+                  $ref: '#/components/schemas/CA.PersonalAmbition'
+          description: Request successful
+        '403':
+          description: User is not authorized
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'                
+ 
+ 
+  /me/ambition/{ambition-id}:
+    get:
+      operationId: getMyAmbition
+      summary: Get a single ambition for user
+      tags:
+        - Read my data
+      parameters:
+        - in: path
+          name: ambition-id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CA.PersonalAmbition'
+          description: Request successful
+        '403':
+          description: User is not authorized
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error' 
+                
+    post:
+      operationId: addNewAmbition
+      summary: Add a new ambition for user
+      tags:
+        - Update my data
+      parameters:
+        - in: path
+          name: ambition-id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Time entry to add
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CA.PersonalAmbition'            
+      responses:
+        '201':
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CA.PersonalAmbition'
+          description: Request successful
+        '403':
+          description: User is not authorized
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'                
+
+  /me/ambition/{ambition-id}/action:
+    post:
+      operationId: addNewActionForAmbition
+      summary: Add a action for ambition user has
+      tags:
+        - Update my data
+      parameters:
+        - in: path
+          name: ambition-id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Time entry to add
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CA.PersonalAction'            
+      responses:
+        '201':
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CA.PersonalAction'
+          description: Request successful
+        '403':
+          description: User is not authorized
+        default:
+          description: Unexpected error
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'       
 
 components:
   schemas:
@@ -67,14 +215,17 @@ components:
           type: string
           format: date
           description: Ingress
-          example: "Food related amibitions..."                    
+          example: "Food related category..."
+        iconSrc:
+          type: string
+          description: URI to icon
         ambitions:
           type: array
           items: 
-            $ref: '#/components/schemas/CA.Ambition'
+            $ref: '#/components/schemas/CA.AmbitionHeader'
           
             
-    CA.Ambition:
+    CA.AmbitionHeader:
       type: object
       properties:
         id: 
@@ -92,7 +243,68 @@ components:
           format: date
           description: Ingress
           example: "Food related amibitions..."   
-        type:
+        allowPlusOne:
+          type: boolean
+          example: true
+        allowLogAction:
+          type: boolean
+          example: true
+          
+    CA.AmbitionPage:
+      type: object
+      properties: 
+        markdown:
           type: string
-          description: Type
-          enum: ["+1","Action"]
+        
+          
+          
+    CA.PersonalAmbition:
+      type: object
+      properties:
+        userId: 
+          type: string
+          description: User id
+          example: "<guid>"
+        ambition: 
+          $ref: '#/components/schemas/CA.AmbitionHeader'
+        allowLocation:
+          description: Allow location to be tracked when logging 
+          type: boolean
+          example: true
+        reasonForAmbition:
+          type: string
+          description: Background for user having this ambition
+          example: "Reduces plastic waste in my area" 
+        nextAction: 
+          type: string
+          description: Next action planned for this ambition
+          example: "Recruit a friend to help me" 
+        actions:
+          description: Actions taken
+          type: array
+          items: 
+            $ref: '#/components/schemas/CA.PersonalAction'
+            
+    CA.PersonalAction:
+      type: object
+      properties:
+        date: 
+          type: string
+          format: date
+          description: When action done
+          example: "FOOD"  
+        location:
+          type: string
+          description: Location (if exist) for action
+          example: "TODO define format" 
+        actionDescription:
+          type: string
+          format: date
+          description: Describes the action made
+          example: "Picked a bag of plastic"   
+        isPlusOne:
+          type: boolean
+          example: false
+        allowLogAction:
+          type: boolean
+          example: true    
