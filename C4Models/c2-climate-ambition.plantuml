@@ -1,0 +1,24 @@
+@startuml [Container] Climate amibition
+!includeurl c4-plantuml/C4_Container.puml
+
+'Roles
+Person(user, "User", "End-user")
+Person(moderator, "Moderator", "Responsible moderating solution")
+
+'Main system boundary and relations internally
+System_Boundary(c1, "Climate amibition") {
+    Container(app, "App", "ReactNative iOS, Android and Windows", "Mobile app")
+
+    Container(azure_api_mgmt, "API Management", "Azure Service", "End-point for APIs in Azure") 
+
+    Container(azure_api, "API", "Docker - .NET Core", "API implementation for solution")  
+
+    Container(azure_app_insight, "Application Insight", "Azure Service", "Logging of API calls and source for usage metrics") 
+
+    Rel_Down(app, azure_api_mgmt, "Performs REST API calls against")  
+    Rel_Down(azure_api_mgmt, azure_api, "Certificate-based mutual authenication and proxy to implementation")  
+    Rel_Right(azure_api, azure_app_insight, "logs API requests to")  
+}
+
+
+@enduml

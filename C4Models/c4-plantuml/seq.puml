@@ -1,0 +1,19 @@
+'Styling for sequence diagrams
+skinparam sequence {
+	ArrowColor black
+
+	LifeLineBorderColor #438DD5
+	LifeLineBackgroundColor white
+	
+	ParticipantBorderColor Black
+	ParticipantBackgroundColor #438DD5
+	ParticipantFontName Arial
+	ParticipantFontSize 14
+	ParticipantFontColor white
+	
+    ActorBorderColor Black
+	ActorBackgroundColor white
+	ActorFontColor black
+	ActorFontSize 17
+	ActorFontName Arial
+}
